@@ -1,4 +1,3 @@
-version: '3'
 services:
   traefik:
     image: traefik:v3.6
@@ -20,7 +19,8 @@ services:
       - "./letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   app:
-    build: .
+    image: ghcr.io/gasparbucuane/decidim:main
+    container_name: decidim
     volumes:
       - ./storage:/app/storage
     restart: ${RESTART_POLICY:-always}
@@ -53,10 +53,10 @@ services:
       - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
       - RACK_ATTACK_SECRET
       - SENTRY_DSN
-      - DECIDIM_HOST
+      - DECIDIM_HOST=${DECIDIM_HOST:-localhost}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`$DECIDIM_HOST`)"
+      - "traefik.http.routers.whoami.rule=Host(`${DECIDIM_HOST:-locahost}`)"
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=myresolver"
     depends_on:
