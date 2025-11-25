@@ -1,26 +1,118 @@
 version: '3'
 services:
-  app:
-    image: decidim/decidim:0.31.0
-    volumes:
-      - .:/app
-      - bundle:/usr/local/bundle
-      - node_modules:/app/node_modules
-    environment:
-      - PORT=3000
-      - DATABASE_HOST=pg
-      - DATABASE_USERNAME=postgres
-      - RAILS_ENV=development
+  traefik:
+    image: traefik:v3.6
+    container_name: traefik
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.email=postmaster@pokecode.net"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     ports:
-      - 3000:3000
-    links:
-      - pg
-    command: bundle exec puma
-  pg:
-    image: postgres
+      - "443:443"
+      - "8080:8080"
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  app:
+    build: .
+    volumes:
+      - ./storage:/app/storage
+    restart: ${RESTART_POLICY:-always}
+    env_file:
+      - .env
+    environment:
+      - RUN_RAILS=true
+      - RUN_SIDEKIQ=false
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:decidim@db/decidim}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-b3fc8032739e7f34c8886ddcabb427ed87c1434c134b228dbc8b5227c0af4e5f1f732d0e42121cef47a8934194fac30ed2cc073369a2b63b8cfbd4c11c7b27e7}
+      - DECIDIM_FORCE_SSL=${DECIDIM_FORCE_SSL:-false}
+      - QUEUE_ADAPTER=${QUEUE_ADAPTER:-sidekiq}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - WEB_CONCURRENCY=${WEB_CONCURRENCY:-2}
+      - RAILS_LOG_LEVEL=${RAILS_LOG_LEVEL:-info}
+      - DECIDIM_ENABLE_HTML_HEADER_SNIPPETS=${DECIDIM_ENABLE_HTML_HEADER_SNIPPETS:-false}
+      - DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS=${DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS:-360}
+      - CHANGE_ACTIVE_STEP=${CHANGE_ACTIVE_STEP:-enabled}
+      - SEND_REMINDERS=${SEND_REMINDERS:-enabled}
+      - WEEKLY_NOTIFICATIONS_DIGEST=${WEEKLY_NOTIFICATIONS_DIGEST:-enabled}
+      - DAILY_NOTIFICATIONS_DIGEST=${DAILY_NOTIFICATIONS_DIGEST:-enabled}
+      - SMTP_STARTTLS_AUTO=${SMTP_STARTTLS_AUTO:-true}
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_ADDRESS
+      - SMTP_DOMAIN
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - DECIDIM_MAILER_SENDER
+      - MAPS_API_KEY
+      - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
+      - RACK_ATTACK_SECRET
+      - SENTRY_DSN
+      - DECIDIM_HOST
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`$DECIDIM_HOST`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+    depends_on:
+      - db
+      - redis
+  sidekiq:
+    build: .
+    volumes:
+      - ./storage:/app/storage
+    restart: ${RESTART_POLICY:-always}
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgres://postgres:decidim@db/decidim}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE:-b3fc8032739e7f34c8886ddcabb427ed87c1434c134b228dbc8b5227c0af4e5f1f732d0e42121cef47a8934194fac30ed2cc073369a2b63b8cfbd4c11c7b27e7}
+      - DECIDIM_FORCE_SSL=${DECIDIM_FORCE_SSL:-false}
+      - QUEUE_ADAPTER=${QUEUE_ADAPTER:-sidekiq}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      - RUN_RAILS=false
+      - RUN_SIDEKIQ=true
+      - SIDEKIQ_CONCURRENCY=${SIDEKIQ_CONCURRENCY:-5}
+      - RAILS_LOG_LEVEL=${RAILS_LOG_LEVEL:-info}
+      - DECIDIM_ENABLE_HTML_HEADER_SNIPPETS=${DECIDIM_ENABLE_HTML_HEADER_SNIPPETS:-false}
+      - DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS=${DECIDIM_ADMIN_PASSWORD_EXPIRATION_DAYS:-0}
+      - CHANGE_ACTIVE_STEP=${CHANGE_ACTIVE_STEP:-enabled}
+      - SEND_REMINDERS=${SEND_REMINDERS:-enabled}
+      - WEEKLY_NOTIFICATIONS_DIGEST=${WEEKLY_NOTIFICATIONS_DIGEST:-enabled}
+      - DAILY_NOTIFICATIONS_DIGEST=${DAILY_NOTIFICATIONS_DIGEST:-enabled}
+      - SMTP_STARTTLS_AUTO=${SMTP_STARTTLS_AUTO:-true}
+      - DECIDIM_MAILER_SENDER
+      - SMTP_USERNAME
+      - SMTP_PASSWORD
+      - SMTP_ADDRESS
+      - SMTP_DOMAIN
+      - SMTP_PORT=${SMTP_PORT:-25}
+      - MAPS_API_KEY
+      - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
+      - RACK_ATTACK_SECRET
+      - SENTRY_DSN
+    depends_on:
+      - db
+      - redis
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-decidim}
+      - POSTGRES_DB=${POSTGRES_DB:-decidim}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+  redis:
+    image: redis
+    volumes:
+      - redis_data:/data
 volumes:
-  node_modules: {}
-  bundle: {}
-  pg-data: {}
+  pg_data:
+  redis_data:
+  decidim_uploads:
+  decidim_storage:
