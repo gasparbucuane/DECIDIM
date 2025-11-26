@@ -37,6 +37,7 @@ SMTP_ADDRESS=XXXXXX
 SMTP_DOMAIN=XXXXXX
 SMTP_PORT=XXXXXX
 DECIDIM_ENV=production
+DECIDIM_HOST=decidim.example.org
 ```
 
 ### SSL configuration
