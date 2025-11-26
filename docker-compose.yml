@@ -6,12 +6,16 @@ services:
       # Try to enable this if something isn't working. 
       # Chances are, Traefik will tell you why.
       # Be careful in production as it exposes the traffic you might not want to expose.
-      #- --log.level=DEBUG
-      - --api.insecure=true
+      # - --log.level=DEBUG
+      - --api.dashboard=true
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
       - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.asDefault=true
+      - --entrypoints.dashboard.address=:4430
       # LetsEncrypt Staging Server - uncomment when testing
       # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.le.acme.email=postmaster@${DECIDIM_HOST:-localhost}
@@ -22,7 +26,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      - 4430:4430 # traefik dashboard
     env_file:
       - .env
     volumes:
@@ -30,12 +34,15 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - traefik.enable=true
-      # # global redirect to https
-      # - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
-      # - traefik.http.routers.http-catchall.entrypoints=web
-      # - traefik.http.routers.http-catchall.middlewares=redirect-to-https
-      # # middleware redirect
-      # - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
+      # Dashboard configuration
+      - traefik.http.routers.dashboard.rule=Host(`${DECIDIM_HOST:-localhost}`)
+      - traefik.http.routers.dashboard.entrypoints=dashboard
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.tls=true
+      - traefik.http.routers.dashboard.tls.certresolver=le
+      - traefik.http.routers.dashboard.middlewares=dashboard-auth
+      # Basic auth middleware
+      - traefik.http.middlewares.dashboard-auth.basicauth.users=admin:${DASHBOARD_AUTH_PASSWORD:-admin}
   decidim:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-main}
     container_name: decidim-${DECIDIM_ENV:-production}
@@ -52,7 +59,7 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.decidim.rule=Host(`${DECIDIM_HOST}`)
-      - traefik.http.routers.decidim.entrypoints=web,websecure
+      - traefik.http.routers.decidim.entrypoints=websecure
       - traefik.http.routers.decidim.tls=true
       - traefik.http.routers.decidim.tls.certresolver=le
       - traefik.http.services.decidim.loadbalancer.server.port=3000
@@ -75,6 +82,30 @@ services:
     depends_on:
       - db
       - redis
+  db_backup:
+    image: tiredofit/db-backup
+    container_name: db_backup
+    volumes:
+      - ./backups:/backup
+    env_file:
+      - .env
+    environment:
+      - TIMEZONE=${TIMEZONE:-Europe/Vienna}
+      - CONTAINER_ENABLE_MONITORING=${CONTAINER_ENABLE_MONITORING:-FALSE}
+      - USER_DBBACKUP=${USER_DBBACKUP:-1000}
+      - GROUP_DBBACKUP=${GROUP_DBBACKUP:-1000}
+      - BACKUP_JOB_CONCURRENCY=${BACKUP_JOB_CONCURRENCY:-1}     # Only run one job at a time
+      - DEFAULT_CHECKSUM=${DEFAULT_CHECKSUM:-NONE}        # Don't create checksums
+      - DEFAULT_COMPRESSION=${DEFAULT_COMPRESSION:-Bzip2}     # Compress all with ZSTD
+      - DEFAULT_BACKUP_INTERVAL=${DEFAULT_BACKUP_INTERVAL:-1440}   # Backup every 1440 minutes
+      - DEFAULT_BACKUP_BEGIN=${DEFAULT_BACKUP_BEGIN:-0100}      # Start backing up at midnight
+      - DEFAULT_CLEANUP_TIME=${DEFAULT_CLEANUP_TIME:-10080}    # Cleanup backups after a week
+      - DB01_TYPE=pgsql
+      - DB01_HOST=db
+      - DB01_USER=${POSTGRES_USER}
+      - DB01_PASS=${POSTGRES_PASSWORD}
+      - DB01_NAME=${POSTGRES_DB}
+
   db:
     image: postgres:16
     env_file:

@@ -38,12 +38,20 @@ SMTP_DOMAIN=XXXXXX
 SMTP_PORT=XXXXXX
 DECIDIM_ENV=production
 DECIDIM_HOST=decidim.example.org
+DASHBOARD_AUTH_PASSWORD='$2y$10$0Ipw2g9Utl.ZgI1ozWB2aeuwiXJ1tQC3eBo/g5.MZ0GhP7iliooia' # admin
 ```
 
 ### SSL configuration
 
 This application uses Traefik to handle the certificates with Let's Encrypt.
 You need to ensure that the env var `DECIDIM_HOST` is set to a valid hostname pointing to the server's ip.
+
+### Traefik Dashboard
+
+Traefik dashboard is available at `https://DECIDIM_HOST:4430` with basic authentication enabled.
+
+User: `admin`
+Password: Generate a password into the env `DASHBOARD_AUTH_PASSWORD` with the comman `htpasswd -nBC 10 admin`
 
 ## Deploy
 
