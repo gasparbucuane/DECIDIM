@@ -52,6 +52,7 @@ mise.toml
 # Ignore node modules
 /node_modules
 /packages/*/node_modules
+/letsencrypt
 
 # Ignore Tailwind configuration
 tailwind.config.js

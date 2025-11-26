@@ -17,6 +17,7 @@ gem "decidim", DECIDIM_VERSION
 
 gem "bootsnap", "~> 1.3"
 
+gem "health_check"
 gem "puma", ">= 6.3.1"
 
 group :development, :test do
