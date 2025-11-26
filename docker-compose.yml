@@ -3,32 +3,37 @@ services:
     image: traefik:v3.6
     container_name: traefik
     command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      # Try to enable this if something isn't working. 
+      # Chances are, Traefik will tell you why.
+      # Be careful in production as it exposes the traffic you might not want to expose.
+      #- --log.level=DEBUG
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      # LetsEncrypt Staging Server - uncomment when testing
+      # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.le.acme.email=postmaster@${DECIDIM_HOST:-localhost}
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpChallenge=true
       - --certificatesresolvers.le.acme.httpChallenge.entrypoint=web
     restart: ${RESTART_POLICY:-unless-stopped}
     ports:
-      - "80:80"
-      - "443:443"
-      - "8080:8080"
+      - 80:80
+      - 443:443
+      - 8080:8080
     volumes:
-      - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
       # # global redirect to https
-      # - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      # - "traefik.http.routers.http-catchall.entrypoints=web"
-      # - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      # - traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)
+      # - traefik.http.routers.http-catchall.entrypoints=web
+      # - traefik.http.routers.http-catchall.middlewares=redirect-to-https
       # # middleware redirect
-      # - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # - traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https
   decidim:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-main}
     container_name: decidim-${DECIDIM_ENV:-production}
@@ -43,12 +48,12 @@ services:
       - RUN_RAILS=true
       - RUN_SIDEKIQ=false
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.decidim.rule=(Host(`$DECIDIM_HOST`))"
-      - "traefik.http.routers.decidim.entrypoints=web,websecure"
-      - "traefik.http.routers.decidim.tls=true"
-      - "traefik.http.routers.decidim.tls.certresolver=le"
-      - "traefik.http.services.decidim.loadbalancer.server.port=3000"
+      - traefik.enable=true
+      - traefik.http.routers.decidim.rule=Host(`${DECIDIM_HOST}`)
+      - traefik.http.routers.decidim.entrypoints=web,websecure
+      - traefik.http.routers.decidim.tls=true
+      - traefik.http.routers.decidim.tls.certresolver=le
+      - traefik.http.services.decidim.loadbalancer.server.port=3000
     depends_on:
       - db
       - redis
