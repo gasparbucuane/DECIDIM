@@ -16,13 +16,15 @@ services:
       # - --certificatesResolvers.letsencrypt.acme.caServer=https://acme-staging-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.le.acme.email=postmaster@${DECIDIM_HOST:-localhost}
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.le.acme.httpChallenge=true
-      - --certificatesresolvers.le.acme.httpChallenge.entrypoint=web
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
     restart: ${RESTART_POLICY:-unless-stopped}
     ports:
       - 80:80
       - 443:443
       - 8080:8080
+    env_file:
+      - .env
     volumes:
       - ./letsencrypt:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
