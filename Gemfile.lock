@@ -195,6 +195,14 @@ GIT
     decidim-verifications (0.31.0)
       decidim-core (= 0.31.0)
 
+GIT
+  remote: https://github.com/openpoke/decidim-module-term_customizer.git
+  revision: 8cd8bafc273b34ff7dae7c0dcbf231062aa68466
+  specs:
+    decidim-term_customizer (0.31)
+      decidim-admin (~> 0.31.0)
+      decidim-core (~> 0.31.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -935,6 +943,7 @@ DEPENDENCIES
   decidim!
   decidim-decidim_awesome!
   decidim-dev!
+  decidim-term_customizer!
   health_check
   letter_opener_web (~> 2.0)
   listen (~> 3.1)
