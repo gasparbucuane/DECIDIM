@@ -1,5 +1,5 @@
 service:
-  decidim-staging:
+  decidim-dev:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-dev}
     container_name: decidim-${DECIDIM_ENV:-dev}
     pull_policy: ${PULL_POLICY:-always}
