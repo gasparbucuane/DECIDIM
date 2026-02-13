@@ -1,0 +1,34 @@
+services:
+  decidim:
+    image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-main}
+    container_name: decidim-${DECIDIM_ENV:-production}
+    pull_policy: ${PULL_POLICY:-always}
+    volumes:
+      - ./storage:/app/storage
+    restart: ${RESTART_POLICY:-unless-stopped}
+    env_file:
+      - .env.default
+      - .env
+    environment:
+      - RUN_RAILS=true
+      - RUN_SIDEKIQ=true
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.decidim.rule=Host(`${DECIDIM_HOST}`)
+      - traefik.http.routers.decidim.entrypoints=websecure
+      - traefik.http.routers.decidim.tls=true
+      - traefik.http.routers.decidim.tls.certresolver=le
+      - traefik.http.services.decidim.loadbalancer.server.port=3000
+    depends_on:
+      - db
+      - redis
+    networks:
+      - web
+      - backend
+
+networks:
+  web:
+    external: true
+  backend:
+    external: true
+
