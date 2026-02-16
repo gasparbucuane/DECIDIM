@@ -74,8 +74,7 @@ services:
   db:
     image: postgres:16
     env_file:
-      - .env.default
-      - .env
+      - .env.production
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:

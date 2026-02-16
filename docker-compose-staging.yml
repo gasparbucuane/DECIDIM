@@ -1,17 +1,13 @@
 services:
   decidim-staging:
-    image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-staging}
+    image: ghcr.io/gasparbucuane/decidim:${GIT_STAGING_REF:-staging}
     container_name: decidim_staging
-    pull_policy: ${PULL_POLICY:-always}
     volumes:
       - staging-storage:/app/storage
     restart: ${RESTART_POLICY:-unless-stopped}
     env_file:
-      - .env.default
+      - .env
       - .env.staging
-    environment:
-      - RUN_RAILS=true
-      - RUN_SIDEKIQ=true
     labels:
       - traefik.enable=true
       - traefik.http.routers.decidim.rule=Host(`${DECIDIM_STAGING_HOST}`)

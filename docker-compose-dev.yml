@@ -1,17 +1,13 @@
 services:
   decidim-dev:
-    image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-dev}
+    image: ghcr.io/gasparbucuane/decidim:${GIT_DEV_REF:-dev}
     container_name: decidim_dev
-    pull_policy: ${PULL_POLICY:-always}
     volumes:
       - dev-storage:/app/storage
     restart: ${RESTART_POLICY:-unless-stopped}
     env_file:
-      - .env.default
+      - .env
       - .env.dev
-    environment:
-      - RUN_RAILS=true
-      - RUN_SIDEKIQ=true
     labels:
       - traefik.enable=true
       - traefik.http.routers.decidim.rule=Host(`${DECIDIM_DEV_HOST}`)
