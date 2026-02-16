@@ -46,7 +46,7 @@ services:
     networks:
       - web
       - backend
-    db_backup:
+  db_backup:
     image: tiredofit/db-backup
     container_name: db_backup
     volumes:
