@@ -10,11 +10,11 @@ services:
       - .env.production
     labels:
       - traefik.enable=true
-      - traefik.http.routers.decidim.rule=Host(`${DECIDIM_HOST}`)
-      - traefik.http.routers.decidim.entrypoints=websecure
-      - traefik.http.routers.decidim.tls=true
-      - traefik.http.routers.decidim.tls.certresolver=le
-      - traefik.http.services.decidim.loadbalancer.server.port=3000
+      - traefik.http.routers.decidim-prod.rule=Host(`${DECIDIM_HOST}`)
+      - traefik.http.routers.decidim-prod.entrypoints=websecure
+      - traefik.http.routers.decidim-prod.tls=true
+      - traefik.http.routers.decidim-prod.tls.certresolver=le
+      - traefik.http.services.decidim-prod.loadbalancer.server.port=3000
     networks:
       - web
       - backend

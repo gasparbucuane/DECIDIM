@@ -10,11 +10,11 @@ services:
       - .env.staging
     labels:
       - traefik.enable=true
-      - traefik.http.routers.decidim.rule=Host(`${DECIDIM_STAGING_HOST}`)
-      - traefik.http.routers.decidim.entrypoints=websecure
-      - traefik.http.routers.decidim.tls=true
-      - traefik.http.routers.decidim.tls.certresolver=le
-      - traefik.http.services.decidim.loadbalancer.server.port=3000
+      - traefik.http.routers.decidim-staging.rule=Host(`${DECIDIM_STAGING_HOST}`)
+      - traefik.http.routers.decidim-staging.entrypoints=websecure
+      - traefik.http.routers.decidim-staging.tls=true
+      - traefik.http.routers.decidim-staging.tls.certresolver=le
+      - traefik.http.services.decidim-staging.loadbalancer.server.port=3000
     networks:
       - web
       - backend
