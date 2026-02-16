@@ -1,14 +1,14 @@
 services:
   decidim-dev:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-dev}
-    container_name: decidim-${DECIDIM_ENV:-dev}
+    container_name: decidim_dev
     pull_policy: ${PULL_POLICY:-always}
     volumes:
       - dev-storage:/app/storage
     restart: ${RESTART_POLICY:-unless-stopped}
     env_file:
       - .env.default
-      - .env-dev
+      - .env.dev
     environment:
       - RUN_RAILS=true
       - RUN_SIDEKIQ=true

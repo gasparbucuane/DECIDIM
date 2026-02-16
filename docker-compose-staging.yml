@@ -1,14 +1,14 @@
 services:
   decidim-staging:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-staging}
-    container_name: decidim-${DECIDIM_ENV:-staging}
+    container_name: decidim_staging
     pull_policy: ${PULL_POLICY:-always}
     volumes:
       - staging-storage:/app/storage
     restart: ${RESTART_POLICY:-unless-stopped}
     env_file:
       - .env.default
-      - .env-staging
+      - .env.staging
     environment:
       - RUN_RAILS=true
       - RUN_SIDEKIQ=true

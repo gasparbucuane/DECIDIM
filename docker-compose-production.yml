@@ -1,7 +1,7 @@
 services:
   decidim:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-main}
-    container_name: decidim-${DECIDIM_ENV:-production}
+    container_name: decidim_prod
     pull_policy: ${PULL_POLICY:-always}
     volumes:
       - ./storage:/app/storage
