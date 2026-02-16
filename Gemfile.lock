@@ -197,6 +197,15 @@ GIT
       decidim-core (= 0.31.1)
 
 GIT
+  remote: https://github.com/openpoke/decidim-module-chatbot.git
+  revision: 9556e5bf1411a58257a50f255f39556c03be35b2
+  branch: main
+  specs:
+    decidim-chatbot (0.1.0)
+      decidim-core (>= 0.31.0, < 0.32.0)
+      faraday (> 2.0)
+
+GIT
   remote: https://github.com/openpoke/decidim-module-term_customizer.git
   revision: 8cd8bafc273b34ff7dae7c0dcbf231062aa68466
   branch: main
@@ -1008,6 +1017,7 @@ DEPENDENCIES
   brakeman (~> 7.0)
   byebug (~> 11.0)
   decidim!
+  decidim-chatbot!
   decidim-decidim_awesome!
   decidim-dev!
   decidim-term_customizer!
@@ -1075,6 +1085,7 @@ CHECKSUMS
   decidim-assemblies (0.31.1)
   decidim-blogs (0.31.1)
   decidim-budgets (0.31.1)
+  decidim-chatbot (0.1.0)
   decidim-comments (0.31.1)
   decidim-core (0.31.1)
   decidim-debates (0.31.1)
