@@ -1,4 +1,4 @@
-service:
+services:
   decidim-dev:
     image: ghcr.io/gasparbucuane/decidim:${GIT_REF:-dev}
     container_name: decidim-${DECIDIM_ENV:-dev}
@@ -19,15 +19,12 @@ service:
       - traefik.http.routers.decidim.tls=true
       - traefik.http.routers.decidim.tls.certresolver=le
       - traefik.http.services.decidim.loadbalancer.server.port=3000
-    depends_on:
-      - db
-      - redis
     networks:
       - web
       - backend
 
 volumes:
-  - dev-storage: {}
+  dev-storage:
 
 networks:
   web:

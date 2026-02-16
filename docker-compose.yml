@@ -71,7 +71,6 @@ services:
       - DB01_NAME=${POSTGRES_DB}
     networks:
       - backend
-
   db:
     image: postgres:16
     env_file:
