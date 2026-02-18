@@ -198,8 +198,8 @@ GIT
 
 GIT
   remote: https://github.com/openpoke/decidim-module-chatbot.git
-  revision: 737840d8b5c17e601f7521071f601017122319a8
-  branch: tmp-proposal-fix
+  revision: 1caf178925853da5df120596ee4d0eb8e6c5445c
+  branch: fix-proposal-search
   specs:
     decidim-chatbot (0.1.0)
       decidim-core (>= 0.31.0, < 0.32.0)

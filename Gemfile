@@ -6,7 +6,7 @@ ruby RUBY_VERSION
 
 DECIDIM_VERSION = { github: "decidim/decidim", branch: "release/0.31-stable" }.freeze
 gem "decidim", DECIDIM_VERSION
-gem "decidim-chatbot", github: "openpoke/decidim-module-chatbot", branch: "tmp-proposal-fix"
+gem "decidim-chatbot", github: "openpoke/decidim-module-chatbot", branch: "fix-proposal-search"
 gem "decidim-decidim_awesome", github: "decidim-ice/decidim-module-decidim_awesome", branch: "main"
 gem "decidim-term_customizer", github: "openpoke/decidim-module-term_customizer", branch: "main"
 
