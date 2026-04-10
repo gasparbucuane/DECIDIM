@@ -1,0 +1,89 @@
+<div class="main-footer bg-gray-800 text-white">
+  <!-- Top Footer -->
+  <div class="main-footer__top w-full px-4 py-10">
+    <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+      
+      <!-- Decidim Menu -->
+      <nav role="navigation" aria-label="Decidim" class="flex-1 lg:mr-4">
+        <h2 class="h4 mb-6">Decidim</h2>
+        <ul class="space-y-2">
+          <li class="font-semibold">
+            <%= link_to "Home", decidim.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <% if Decidim.module_installed?(:participatory_processes) %>
+            <li class="font-semibold">
+              <%= link_to "Processes", decidim_participatory_processes.participatory_processes_path(locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            </li>
+          <% end %>
+          <li class="font-semibold">
+            <%= link_to "My account", decidim.account_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <li class="font-semibold">
+            <%= link_to "Create an account", decidim.new_user_registration_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <li class="font-semibold">
+            <%= link_to "Log in", decidim.new_user_session_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Resources Menu -->
+      <nav role="navigation" aria-label="Resources" class="flex-1 lg:mx-4">
+        <h2 class="h4 mb-6">Resources</h2>
+        <ul class="space-y-2">
+          <li class="font-semibold">
+            <%= link_to "Activity", decidim.last_activities_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <% if Decidim.module_installed?(:meetings) %>
+            <li class="font-semibold">
+              <%= link_to "Meetings", Decidim::Meetings::DirectoryEngine.routes.url_helpers.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            </li>
+          <% end %>
+          <li class="font-semibold">
+            <%= link_to "Open Data", decidim.page_path("open-data", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Help Menu -->
+      <nav role="navigation" aria-label="Help" class="flex-1 lg:mx-4">
+        <h2 class="h4 mb-6">Help</h2>
+        <ul class="space-y-2">
+          <li class="font-semibold">
+            <%= link_to "General", decidim.page_path("help", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Contact Menu -->
+      <nav role="navigation" aria-label="Contact" class="flex-1 lg:ml-4">
+        <h2 class="h4 mb-6">Contact</h2>
+        <ul class="space-y-2">
+          <li class="font-semibold">
+            <%= link_to "Support", decidim.page_path("support", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <li class="font-semibold">
+            <%= link_to "FAQ", decidim.page_path("faq", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+          <li class="font-semibold">
+            <%= link_to "Contact Us", decidim.page_path("contact", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- Bottom Footer -->
+  <div class="main-footer__down w-full px-4 py-6 flex flex-col md:flex-row justify-between items-center border-t border-gray-700">
+    
+    <nav class="md:w-1/2 lg:w-auto mb-4 md:mb-0" role="navigation" aria-label="Legal">
+      <%= render partial: "layouts/decidim/footer/main_legal" %>
+    </nav>
+
+    <nav class="w-full md:w-auto md:ml-auto" role="navigation" aria-label="<%= t('layouts.decidim.footer.social_media') %>">
+      <%= render partial: "layouts/decidim/footer/main_social_media_links" %>
+    </nav>
+
+  </div>
+</div>
