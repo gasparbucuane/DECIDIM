@@ -5,68 +5,68 @@
       
       <!-- Decidim Menu -->
       <nav role="navigation" aria-label="Decidim" class="flex-1 lg:mr-4">
-        <h2 class="h4 mb-6">Decidim</h2>
+        <h2 class="h4 mb-6">Cidadão Participa</h2>
         <ul class="space-y-2">
           <li class="font-semibold">
-            <%= link_to "Home", decidim.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Início", decidim.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <% if Decidim.module_installed?(:participatory_processes) %>
             <li class="font-semibold">
-              <%= link_to "Processes", decidim_participatory_processes.participatory_processes_path(locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+              <%= link_to "Processos", decidim_participatory_processes.participatory_processes_path(locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
             </li>
           <% end %>
           <li class="font-semibold">
-            <%= link_to "My account", decidim.account_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Minha Conta", decidim.account_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <li class="font-semibold">
-            <%= link_to "Create an account", decidim.new_user_registration_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Criar uma Conta", decidim.new_user_registration_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <li class="font-semibold">
-            <%= link_to "Log in", decidim.new_user_session_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Entrar", decidim.new_user_session_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
         </ul>
       </nav>
 
       <!-- Resources Menu -->
       <nav role="navigation" aria-label="Resources" class="flex-1 lg:mx-4">
-        <h2 class="h4 mb-6">Resources</h2>
+        <h2 class="h4 mb-6">Recursos</h2>
         <ul class="space-y-2">
           <li class="font-semibold">
-            <%= link_to "Activity", decidim.last_activities_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Atividades", decidim.last_activities_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <% if Decidim.module_installed?(:meetings) %>
             <li class="font-semibold">
-              <%= link_to "Meetings", Decidim::Meetings::DirectoryEngine.routes.url_helpers.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+              <%= link_to "Reuniões", Decidim::Meetings::DirectoryEngine.routes.url_helpers.root_path, class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
             </li>
           <% end %>
           <li class="font-semibold">
-            <%= link_to "Open Data", decidim.page_path("open-data", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Dados Abertos", decidim.page_path("open-data", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
         </ul>
       </nav>
 
       <!-- Help Menu -->
       <nav role="navigation" aria-label="Help" class="flex-1 lg:mx-4">
-        <h2 class="h4 mb-6">Help</h2>
+        <h2 class="h4 mb-6">Ajuda</h2>
         <ul class="space-y-2">
           <li class="font-semibold">
-            <%= link_to "General", decidim.page_path("help", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Geral", decidim.page_path("help", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
         </ul>
       </nav>
 
       <!-- Contact Menu -->
       <nav role="navigation" aria-label="Contact" class="flex-1 lg:ml-4">
-        <h2 class="h4 mb-6">Contact</h2>
+        <h2 class="h4 mb-6">Contactos</h2>
         <ul class="space-y-2">
           <li class="font-semibold">
-            <%= link_to "Support", decidim.page_path("support", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Suporte", decidim.page_path("support", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <li class="font-semibold">
             <%= link_to "FAQ", decidim.page_path("faq", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
           <li class="font-semibold">
-            <%= link_to "Contact Us", decidim.page_path("contact", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
+            <%= link_to "Contacte-nos", decidim.page_path("contact", locale: current_locale), class: "inline-flex no-underline hover:underline underline-offset-4 transition-colors" %>
           </li>
         </ul>
       </nav>
