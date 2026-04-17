@@ -8,6 +8,16 @@
   a[target="_blank"]::after {
     display: none !important;
   }
+  .flex {
+    @apply max-w-7xl mx-auto px-4;
+  }
+}
+
+
+@media (max-width: 1048px) {
+ footer .main-footer__top {
+  display: grid;
+ }
 }
 
   .whatsapp-float {
