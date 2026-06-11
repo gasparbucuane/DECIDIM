@@ -1,7 +1,7 @@
 
 STATIC_ADDITIONAL_USERS = 100
 
-Decidim.stats.register :whatsapp_users_count,
+Decidim.stats.register :Participantes,
                         priority: Decidim::StatsRegistry::HIGH_PRIORITY,
                         icon_name: "user-line",
                         tooltip_key: "Número total de usuários" do |organization, start_at, end_at|                      
