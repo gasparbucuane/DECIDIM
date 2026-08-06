@@ -25,5 +25,5 @@ Decidim.stats.register :Participantes,
   website_users = website_users.where("last_sign_in_at >= ?", start_at) if start_at.present?
   website_users = website_users.where("last_sign_in_at <= ?", end_at) if end_at.present?
   website_user_ids = website_users.pluck(:id)
-  (chatbot_user_ids + website_user_ids + anonymous_count).uniq.count + STATIC_ADDITIONAL_USERS
+  (chatbot_user_ids + website_user_ids).uniq.count + anonymous_count + STATIC_ADDITIONAL_USERS
 end
