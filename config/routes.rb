@@ -1,6 +1,15 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  # … existing routes …
+
+  get "/newsletters", to: redirect("/newsletter-settings"), as: :newsletters
+  get "/newsletter-settings", to: "decidim/newsletter_settings#show", as: :newsletter_settings
+
+  # … rest of the routes …
+end
+
+Rails.application.routes.draw do
   if Rails.env.development?
     mount LetterOpenerWeb::Engine, at: "/letter_opener"
   end
