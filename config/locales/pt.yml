@@ -1,0 +1,10 @@
+pt:
+  decidim:
+    menu:
+      newsletter: "Newsletter"
+    newsletter_settings:
+      title: "Newsletters dos processos"
+      processes:
+        title: "Gerir processos seguidos"
+        description: "Siga ou deixe de seguir processos para escolher quais newsletters pretende receber."
+        empty: "Não existem processos publicados de momento."

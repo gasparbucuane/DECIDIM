@@ -1,0 +1,32 @@
+<%= render layout: "layouts/decidim/shared/layout_user_profile" do %>
+  <% add_decidim_page_title(t("newsletter_settings.title", scope: "decidim")) %>
+  <% content_for(:subtitle) { t("newsletter_settings.title", scope: "decidim") } %>
+
+  <section aria-labelledby="follow-processes-title">
+    <h2 id="follow-processes-title" class="h4">
+      <%= t("newsletter_settings.processes.title", scope: "decidim") %>
+    </h2>
+    <p class="text-gray-2 mt-2">
+      <%= t("newsletter_settings.processes.description", scope: "decidim") %>
+    </p>
+
+    <% if @processes.any? %>
+      <div class="divide-y divide-gray-3 border-y border-gray-3 mt-6">
+        <% @processes.each do |process| %>
+          <div class="flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
+            <%= link_to translated_attribute(process.title),
+                        decidim_participatory_processes.participatory_process_path(process),
+                        class: "font-semibold text-secondary hover:underline" %>
+
+            <%= cell "decidim/follow_button", process,
+                     button_classes: "button button__sm button__transparent-secondary" %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="mt-6">
+        <%= t("newsletter_settings.processes.empty", scope: "decidim") %>
+      </p>
+    <% end %>
+  </section>
+<% end %>
