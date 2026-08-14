@@ -1,0 +1,39 @@
+<section class="podcast-carousel" aria-labelledby="podcast-carousel-title-<%= model.id %>" data-podcast-carousel>
+  <div class="podcast-carousel__header">
+    <h2 id="podcast-carousel-title-<%= model.id %>" class="h2"><%= title %></h2>
+  </div>
+
+  <div class="podcast-carousel__track">
+    <% podcasts.each_with_index do |podcast, index| %>
+      <% modal_id = "podcast-social-links-#{model.id}-#{index}" %>
+      <article class="podcast-carousel__slide">
+        <button type="button" class="podcast-carousel__card" data-dialog-open="<%= modal_id %>" aria-label="<%= t(".open_social_links", name: podcast[:name]) %>">
+          <%= image_tag podcast[:image], alt: podcast[:name], class: "podcast-carousel__image", loading: "lazy" %>
+          <span class="sr-only"><%= podcast[:name] %></span>
+        </button>
+      </article>
+
+      <%= decidim_modal id: modal_id, class: "podcast-social-modal" do %>
+        <div data-dialog-container>
+          <h3 id="dialog-title-<%= modal_id %>" class="h3" data-dialog-title><%= podcast[:name] %></h3>
+          <p><%= t(".choose_network") %></p>
+          <div class="podcast-social-modal__links">
+            <% podcast[:social_links].each do |social_link| %>
+              <%= link_to social_link[:url],
+                          class: "podcast-social-modal__link podcast-social-modal__link--#{social_link[:key]}",
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                          data: { external_link: false, external_domain_link: false } do %>
+                <%= icon social_link[:icon], role: "img", "aria-hidden": true %>
+                <span><%= social_link[:label] %></span>
+              <% end %>
+            <% end %>
+            <% if podcast[:social_links].empty? %>
+              <p class="help-text"><%= t(".links_not_configured") %></p>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</section>

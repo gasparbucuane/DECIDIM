@@ -1,0 +1,83 @@
+<% form.fields_for :settings, form.object.settings do |settings_fields| %>
+  <div class="row column">
+    <%= settings_fields.translated :text_field, :title, label: t(".title") %>
+  </div>
+<% end %>
+
+<div class="podcast-settings" data-podcast-settings data-limit="20">
+  <% form.fields_for :images, form.object.images do |images_fields| %>
+    <% (1..20).each do |index| %>
+      <% podcast = format("podcast_%02d", index) %>
+      <% podcast_enabled = form.object.settings.public_send("#{podcast}_name").present? %>
+      <fieldset class="fieldset podcast-settings__item <%= "hidden" unless podcast_enabled %>" data-podcast-item data-index="<%= index %>">
+        <legend><%= t(".podcast_number", number: index) %></legend>
+
+        <% form.fields_for :settings, form.object.settings do |settings_fields| %>
+          <%= settings_fields.hidden_field :"#{podcast}_name", value: (podcast_enabled ? "podcast_#{index}" : ""), data: { podcast_enabled: true } %>
+
+          <div class="row column podcast-settings__image">
+            <%= images_fields.upload :"#{podcast}_image", label: t(".podcast_image"), button_class: "button button__sm button__transparent-secondary" %>
+          </div>
+
+          <% %i[whatsapp facebook instagram youtube].each do |network| %>
+            <div class="row column podcast-settings__social-field">
+              <%= settings_fields.text_area :"#{podcast}_#{network}_urls",
+                                            rows: 3,
+                                            label: safe_join([icon(t(".networks.#{network}.icon"), "aria-hidden": true), content_tag(:span, t(".networks.#{network}.label"))]),
+                                            help_text: t(".multiple_links_help") %>
+            </div>
+          <% end %>
+        <% end %>
+
+        <button type="button" class="button button__sm button__transparent-secondary" data-remove-podcast>
+          <%= icon "delete-bin-line", "aria-hidden": true %>
+          <%= t(".remove_podcast") %>
+        </button>
+      </fieldset>
+    <% end %>
+  <% end %>
+
+  <button type="button" class="button button__secondary" data-add-podcast>
+    <%= icon "add-fill", "aria-hidden": true %>
+    <%= t(".add_podcast") %>
+  </button>
+  <p class="help-text hidden" data-podcast-limit-message><%= t(".podcast_limit", count: 20) %></p>
+</div>
+
+<script>
+  document.querySelectorAll("[data-podcast-settings]").forEach((container) => {
+    if (container.dataset.initialized === "true") return;
+    container.dataset.initialized = "true";
+
+    const items = Array.from(container.querySelectorAll("[data-podcast-item]"));
+    const addButton = container.querySelector("[data-add-podcast]");
+    const limitMessage = container.querySelector("[data-podcast-limit-message]");
+
+    const updateAddButton = () => {
+      const hasAvailableItem = items.some((item) => item.classList.contains("hidden"));
+      addButton.classList.toggle("hidden", !hasAvailableItem);
+      limitMessage.classList.toggle("hidden", hasAvailableItem);
+    };
+
+    addButton.addEventListener("click", () => {
+      const item = items.find((candidate) => candidate.classList.contains("hidden"));
+      if (!item) return;
+
+      item.classList.remove("hidden");
+      item.querySelector("[data-podcast-enabled]").value = `podcast_${item.dataset.index}`;
+      item.querySelector("input[type='file'], button").focus();
+      updateAddButton();
+    });
+
+    container.querySelectorAll("[data-remove-podcast]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const item = button.closest("[data-podcast-item]");
+        item.querySelectorAll("input[type='text'], input[type='url'], input[type='hidden'][data-podcast-enabled], textarea").forEach((field) => { field.value = ""; });
+        item.classList.add("hidden");
+        updateAddButton();
+      });
+    });
+
+    updateAddButton();
+  });
+</script>
