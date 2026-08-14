@@ -1,0 +1,62 @@
+pt:  
+  activemodel:
+    attributes:
+      content_block_attachment:
+        podcast_01_image: Imagem do podcast 1
+        podcast_02_image: Imagem do podcast 2
+        podcast_03_image: Imagem do podcast 3
+        podcast_04_image: Imagem do podcast 4
+        podcast_05_image: Imagem do podcast 5
+        podcast_06_image: Imagem do podcast 6
+        podcast_07_image: Imagem do podcast 7
+        podcast_08_image: Imagem do podcast 8
+        podcast_09_image: Imagem do podcast 9
+        podcast_10_image: Imagem do podcast 10
+        podcast_11_image: Imagem do podcast 11
+        podcast_12_image: Imagem do podcast 12
+        podcast_13_image: Imagem do podcast 13
+        podcast_14_image: Imagem do podcast 14
+        podcast_15_image: Imagem do podcast 15
+        podcast_16_image: Imagem do podcast 16
+        podcast_17_image: Imagem do podcast 17
+        podcast_18_image: Imagem do podcast 18
+        podcast_19_image: Imagem do podcast 19
+        podcast_20_image: Imagem do podcast 20
+  decidim:
+    content_blocks:
+      podcast_carousel:
+        name: Carrossel de podcasts
+        default_title: Podcasts
+        carousel_controls: Controlos do carrossel
+        previous: Mostrar podcasts anteriores
+        next: Mostrar podcasts seguintes
+        open_social_links: "Abrir redes sociais de %{name}"
+        choose_network: Escolha a rede social que deseja visitar.
+        links_not_configured: Os links deste podcast ainda não foram configurados.
+        podcast_number: "Podcast %{number}"
+      podcast_carousel_settings_form:
+        title: Título do bloco
+        podcast_number: "Podcast %{number}"
+        podcast_image: Imagem do podcast
+        add_podcast: Adicionar podcast
+        remove_podcast: Remover podcast
+        podcast_limit: "Foi atingido o limite máximo de %{count} podcasts."
+        multiple_links_help: Introduza um link completo por linha. Pode adicionar quantos links forem necessários.
+        networks:
+          whatsapp:
+            label: Link do WhatsApp
+            icon: whatsapp-line
+          facebook:
+            label: Link do Facebook
+            icon: facebook-fill
+          instagram:
+            label: Link do Instagram
+            icon: instagram-line
+          youtube:
+            label: Link do YouTube
+            icon: youtube-line
+        podcasts:
+          vozcast: VozCast Manica
+          projovem: ProJovem Podcast
+          ntendere: Ntendere Podcast
+          mayinzacast: MayinzaCast

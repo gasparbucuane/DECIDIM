@@ -1,0 +1,62 @@
+en:
+  activemodel:
+    attributes:
+      content_block_attachment:
+        podcast_01_image: Podcast 1 image
+        podcast_02_image: Podcast 2 image
+        podcast_03_image: Podcast 3 image
+        podcast_04_image: Podcast 4 image
+        podcast_05_image: Podcast 5 image
+        podcast_06_image: Podcast 6 image
+        podcast_07_image: Podcast 7 image
+        podcast_08_image: Podcast 8 image
+        podcast_09_image: Podcast 9 image
+        podcast_10_image: Podcast 10 image
+        podcast_11_image: Podcast 11 image
+        podcast_12_image: Podcast 12 image
+        podcast_13_image: Podcast 13 image
+        podcast_14_image: Podcast 14 image
+        podcast_15_image: Podcast 15 image
+        podcast_16_image: Podcast 16 image
+        podcast_17_image: Podcast 17 image
+        podcast_18_image: Podcast 18 image
+        podcast_19_image: Podcast 19 image
+        podcast_20_image: Podcast 20 image
+  decidim:
+    content_blocks:
+      podcast_carousel:
+        name: Podcast carousel
+        default_title: Podcasts
+        carousel_controls: Carousel controls
+        previous: Show previous podcasts
+        next: Show next podcasts
+        open_social_links: "Open %{name} social networks"
+        choose_network: Choose the social network you want to visit.
+        links_not_configured: Links for this podcast have not been configured yet.
+        podcast_number: "Podcast %{number}"
+      podcast_carousel_settings_form:
+        title: Block title
+        podcast_number: "Podcast %{number}"
+        podcast_image: Podcast image
+        add_podcast: Add podcast
+        remove_podcast: Remove podcast
+        podcast_limit: "The maximum of %{count} podcasts has been reached."
+        multiple_links_help: Enter one complete link per line. You can add as many links as needed.
+        networks:
+          whatsapp:
+            label: WhatsApp link
+            icon: whatsapp-line
+          facebook:
+            label: Facebook link
+            icon: facebook-fill
+          instagram:
+            label: Instagram link
+            icon: instagram-line
+          youtube:
+            label: YouTube link
+            icon: youtube-line
+        podcasts:
+          vozcast: VozCast Manica
+          projovem: ProJovem Podcast
+          ntendere: Ntendere Podcast
+          mayinzacast: MayinzaCast
