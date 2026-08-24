@@ -9,3 +9,7 @@ en:
         title: "Manage followed processes"
         description: "Follow or unfollow processes to choose which newsletters you want to receive."
         empty: "There are no published processes at this time."
+  devise:
+    passwords:
+      edit:
+        password_help: "%{minimum_characters} characters minimum, must contain at least 5 different characters, must not be too common (e.g. 123456) and must be different from your name, nickname, email and the organization's host."
