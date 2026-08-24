@@ -8,3 +8,8 @@ pt:
         title: "Gerir processos seguidos"
         description: "Siga ou deixe de seguir processos para escolher quais newsletters pretende receber."
         empty: "Não existem processos publicados de momento."
+
+  devise:
+    passwords:
+      edit:
+        password_help: "Mínimo de %{minimum_characters} caracteres, deve conter pelo menos 5 caracteres diferentes, não deve ser muito comum (por exemplo, 123456) e deve ser diferente do seu nome, apelido, e-mail e nome da organização."
