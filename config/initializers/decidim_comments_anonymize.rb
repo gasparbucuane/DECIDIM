@@ -61,9 +61,10 @@ Rails.application.config.to_prepare do
     end
 
     def anonymous_display_name
-      author_id = model.decidim_author_id.presence || model.author&.id
-      suffix = author_id.present? ? format("%04d", author_id.to_i % 10_000) : "0000"
-      "anonimo.#{suffix}"
-    end
+      author_id = model.decidim_author_id || model.author&.id
+      scope = "#{model.decidim_commentable_type}-#{model.decidim_commentable_id}"
+      digest = OpenSSL::HMAC.hexdigest("SHA256", Rails.application.secret_key_base, "#{scope}-#{author_id}")
+      "anonimo.#{digest[0, 4]}"
+    end  
   end
 end
