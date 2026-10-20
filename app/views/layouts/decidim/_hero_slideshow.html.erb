@@ -1,3 +1,13 @@
+<%
+  hero_images = %w(1.jpeg 2.jpeg).filter_map do |name|
+    begin
+      image_pack_path("media/images/#{name}")
+    rescue StandardError
+      nil
+    end
+  end
+%>
+
 <style>
   .hero-slideshow-host {
     position: relative;
@@ -15,7 +25,6 @@
     pointer-events: none;
   }
 
-  /* camada escura: só visível quando há texto por cima (slide original) */
   .hero-slides::after {
     content: "";
     position: absolute;
@@ -50,7 +59,6 @@
   }
   .hero-slide.is-contain .hero-slide__blur { display: block; }
 
-  /* texto e botão do hero: visíveis só na slide original */
   .hero-slideshow-hero > *:not(.hero-slides) {
     opacity: 1;
     visibility: visible;
@@ -58,7 +66,7 @@
   }
   .hero-slideshow-hero.hero-content-hidden > *:not(.hero-slides) {
     opacity: 0;
-    visibility: hidden;          /* também desactiva cliques e foco por teclado */
+    visibility: hidden;
     pointer-events: none;
     transition: opacity 1.2s ease-in-out, visibility 0s linear 1.2s;
   }
@@ -75,7 +83,9 @@
     var hero = document.querySelector("div.hero");
     if (!hero) return;
 
-    // 1. elemento mais externo com imagem de fundo (largura total)
+    var heroImages = <%= raw hero_images.to_json %>;
+    if (!heroImages.length) return;
+
     var target = hero;
     var el = hero;
     while (el && el !== document.body) {
@@ -83,30 +93,24 @@
       el = el.parentElement;
     }
 
-    // 2. guarda o fundo original ANTES de o esconder
     var originalBg = getComputedStyle(target).backgroundImage;
     target.classList.add("hero-slideshow-host");
     hero.classList.add("hero-slideshow-hero");
 
-    // 3. configuração
-    var interval = 5000;   // ms entre slides
-    var maxCrop  = 0.20;   // corte máximo aceite antes de passar a "contain"
+    var interval = 5000;
+    var maxCrop  = 0.20;
 
-    // content: true = mostra texto e botão do hero nesta slide
     var slidesConfig = [];
     if (originalBg && originalBg !== "none") {
       slidesConfig.push({ bg: originalBg, adaptive: false, position: "center", content: true });
     }
-    slidesConfig.push(
-      { src: "/hero/1.jpeg", adaptive: true, position: "center top", content: false },
-      { src: "/hero/2.jpeg", adaptive: true, position: "center top", content: false }
-    );
-    // se não houver fundo original, a 1.ª slide mantém o texto
+    heroImages.forEach(function (src) {
+      slidesConfig.push({ src: src, adaptive: true, position: "center top", content: false });
+    });
     if (!slidesConfig.some(function (c) { return c.content; })) {
       slidesConfig[0].content = true;
     }
 
-    // 4. constrói as slides
     var container = document.createElement("div");
     container.className = "hero-slides";
 
@@ -130,13 +134,17 @@
       slide.appendChild(main);
       container.appendChild(slide);
 
-      var item = { cfg: cfg, slide: slide, main: main, ratio: null };
+      var item = { cfg: cfg, slide: slide, main: main, ratio: null, broken: false };
 
       if (cfg.adaptive) {
         var img = new Image();
         img.onload = function () {
           item.ratio = img.naturalWidth / img.naturalHeight;
           layout();
+        };
+        img.onerror = function () {
+          item.broken = true;
+          item.slide.style.display = "none";
         };
         img.src = cfg.src;
       }
@@ -145,14 +153,12 @@
 
     target.insertBefore(container, target.firstChild);
 
-    // 5. mostra/esconde texto, botão e escurecimento conforme a slide activa
     function applyContent(index) {
       var show = slides[index].cfg.content;
       hero.classList.toggle("hero-content-hidden", !show);
       container.classList.toggle("no-overlay", !show);
     }
 
-    // 6. decide cover vs contain conforme o tamanho actual
     function layout() {
       var w = target.clientWidth, h = target.clientHeight;
       if (!w || !h) return;
@@ -174,13 +180,16 @@
     window.addEventListener("orientationchange", layout);
     layout();
 
-    // 7. rotação
     var current = 0, timer = null;
     applyContent(current);
 
     function next() {
-      slides[current].slide.classList.remove("is-active");
-      current = (current + 1) % slides.length;
+      var prev = current;
+      do {
+        current = (current + 1) % slides.length;
+      } while (slides[current].broken && current !== prev);
+
+      slides[prev].slide.classList.remove("is-active");
       slides[current].slide.classList.add("is-active");
       applyContent(current);
     }
