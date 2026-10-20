@@ -1,0 +1,200 @@
+<style>
+  .hero-slideshow-host {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background-image: none !important;
+  }
+
+  .hero-slides {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-color: #1b1b1b;
+    pointer-events: none;
+  }
+
+  /* camada escura: só visível quando há texto por cima (slide original) */
+  .hero-slides::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    opacity: 1;
+    transition: opacity 1.2s ease-in-out;
+  }
+  .hero-slides.no-overlay::after { opacity: 0; }
+
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
+  }
+  .hero-slide.is-active { opacity: 1; }
+
+  .hero-slide__blur,
+  .hero-slide__main {
+    position: absolute;
+    inset: 0;
+    background-repeat: no-repeat;
+  }
+
+  .hero-slide__blur {
+    inset: -30px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(25px) brightness(0.8);
+    display: none;
+  }
+  .hero-slide.is-contain .hero-slide__blur { display: block; }
+
+  /* texto e botão do hero: visíveis só na slide original */
+  .hero-slideshow-hero > *:not(.hero-slides) {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.2s ease-in-out, visibility 0s linear 0s;
+  }
+  .hero-slideshow-hero.hero-content-hidden > *:not(.hero-slides) {
+    opacity: 0;
+    visibility: hidden;          /* também desactiva cliques e foco por teclado */
+    pointer-events: none;
+    transition: opacity 1.2s ease-in-out, visibility 0s linear 1.2s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide,
+    .hero-slides::after,
+    .hero-slideshow-hero > *:not(.hero-slides) { transition: none !important; }
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var hero = document.querySelector("div.hero");
+    if (!hero) return;
+
+    // 1. elemento mais externo com imagem de fundo (largura total)
+    var target = hero;
+    var el = hero;
+    while (el && el !== document.body) {
+      if (getComputedStyle(el).backgroundImage !== "none") { target = el; }
+      el = el.parentElement;
+    }
+
+    // 2. guarda o fundo original ANTES de o esconder
+    var originalBg = getComputedStyle(target).backgroundImage;
+    target.classList.add("hero-slideshow-host");
+    hero.classList.add("hero-slideshow-hero");
+
+    // 3. configuração
+    var interval = 5000;   // ms entre slides
+    var maxCrop  = 0.20;   // corte máximo aceite antes de passar a "contain"
+
+    // content: true = mostra texto e botão do hero nesta slide
+    var slidesConfig = [];
+    if (originalBg && originalBg !== "none") {
+      slidesConfig.push({ bg: originalBg, adaptive: false, position: "center", content: true });
+    }
+    slidesConfig.push(
+      { src: "/hero/1.jpeg", adaptive: true, position: "center top", content: false },
+      { src: "/hero/2.jpeg", adaptive: true, position: "center top", content: false }
+    );
+    // se não houver fundo original, a 1.ª slide mantém o texto
+    if (!slidesConfig.some(function (c) { return c.content; })) {
+      slidesConfig[0].content = true;
+    }
+
+    // 4. constrói as slides
+    var container = document.createElement("div");
+    container.className = "hero-slides";
+
+    var slides = slidesConfig.map(function (cfg, i) {
+      var bg = cfg.adaptive ? "url('" + cfg.src + "')" : cfg.bg;
+
+      var slide = document.createElement("div");
+      slide.className = "hero-slide" + (i === 0 ? " is-active" : "");
+
+      var blur = document.createElement("div");
+      blur.className = "hero-slide__blur";
+      blur.style.backgroundImage = bg;
+
+      var main = document.createElement("div");
+      main.className = "hero-slide__main";
+      main.style.backgroundImage = bg;
+      main.style.backgroundSize = "cover";
+      main.style.backgroundPosition = cfg.position;
+
+      slide.appendChild(blur);
+      slide.appendChild(main);
+      container.appendChild(slide);
+
+      var item = { cfg: cfg, slide: slide, main: main, ratio: null };
+
+      if (cfg.adaptive) {
+        var img = new Image();
+        img.onload = function () {
+          item.ratio = img.naturalWidth / img.naturalHeight;
+          layout();
+        };
+        img.src = cfg.src;
+      }
+      return item;
+    });
+
+    target.insertBefore(container, target.firstChild);
+
+    // 5. mostra/esconde texto, botão e escurecimento conforme a slide activa
+    function applyContent(index) {
+      var show = slides[index].cfg.content;
+      hero.classList.toggle("hero-content-hidden", !show);
+      container.classList.toggle("no-overlay", !show);
+    }
+
+    // 6. decide cover vs contain conforme o tamanho actual
+    function layout() {
+      var w = target.clientWidth, h = target.clientHeight;
+      if (!w || !h) return;
+      var boxRatio = w / h;
+
+      slides.forEach(function (it) {
+        if (!it.cfg.adaptive || !it.ratio) return;
+        var crop = 1 - Math.min(boxRatio / it.ratio, it.ratio / boxRatio);
+        var useContain = crop > maxCrop;
+
+        it.main.style.backgroundSize = useContain ? "contain" : "cover";
+        it.main.style.backgroundPosition = useContain ? "center" : it.cfg.position;
+        it.slide.classList.toggle("is-contain", useContain);
+      });
+    }
+
+    if (window.ResizeObserver) { new ResizeObserver(layout).observe(target); }
+    window.addEventListener("resize", layout);
+    window.addEventListener("orientationchange", layout);
+    layout();
+
+    // 7. rotação
+    var current = 0, timer = null;
+    applyContent(current);
+
+    function next() {
+      slides[current].slide.classList.remove("is-active");
+      current = (current + 1) % slides.length;
+      slides[current].slide.classList.add("is-active");
+      applyContent(current);
+    }
+    function start() { if (!timer && slides.length > 1) timer = setInterval(next, interval); }
+    function stop()  { clearInterval(timer); timer = null; }
+
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!reduceMotion) {
+      start();
+      document.addEventListener("visibilitychange", function () {
+        document.hidden ? stop() : start();
+      });
+    }
+  });
+</script>
